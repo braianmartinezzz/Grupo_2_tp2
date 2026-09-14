@@ -1,7 +1,9 @@
 package com.aydsii.tp2.dto;
 
 import jakarta.validation.constraints.*; // De acá vienen las validaciones
+import lombok.Data;
 
+@Data
 public class VentaDTO{
 
     @NotBlank 
@@ -12,14 +14,5 @@ public class VentaDTO{
 
     @Positive 
     private Double precioUnitario;
-
-    public String getProducto(){return producto;}
-    public void setProducto(String producto){this.producto = producto;}
-
-    public Integer getCantidad(){return cantidad;}
-    public void setCantidad(Integer cantidad){this.cantidad = cantidad;}
-
-    public Double getPrecioUnitario(){return precioUnitario;}
-    public void setPrecioUnitario(Double precioUnitario){this.precioUnitario = precioUnitario;}
 
 }

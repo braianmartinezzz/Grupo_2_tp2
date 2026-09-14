@@ -67,7 +67,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency> // Para las validaciones de los DTOs
+		<dependency> <!-- Para las validaciones de los DTOs --> 
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
