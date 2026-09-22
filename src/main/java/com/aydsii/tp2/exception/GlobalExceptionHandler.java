@@ -1,6 +1,7 @@
 package com.aydsii.tp2.exception;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.context.MessageSourceResolvable;
@@ -19,15 +20,34 @@ import com.aydsii.tp2.dto.ventas.ErrorValidacionDTO;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Se dispara cuando falla la validación de un @Valid @RequestBody (Bean Validation).
+    // Se dispara cuando falla la validación de un @Valid @RequestBody (Bean
+    // Validation).
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Object>> handleValidation(MethodArgumentNotValidException ex) {
-        List<ErrorValidacionDTO> errores = ex.getBindingResult().getFieldErrors().stream()
-                .map(this::mapearError)
-                .toList();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), "Error de validación en la lista de ventas",
-                        errores));
+
+        // Detectamos si el error proviene de una lista (Ejercicio 1) buscando corchetes
+        // en los campos
+        boolean esLista = ex.getBindingResult().getFieldErrors().stream()
+                .anyMatch(error -> error.getField().contains("["));
+
+        if (esLista) {
+            // Lógica original para el Ejercicio 1
+            List<ErrorValidacionDTO> errores = ex.getBindingResult().getFieldErrors().stream()
+                    .map(this::mapearError)
+                    .toList();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), "Error de validación en la lista de ventas",
+                            errores));
+        } else {
+            // Lógica para el Ejercicio 4: Agrupar los errores en formato clave-valor
+            Map<String, String> errores = new java.util.HashMap<>();
+            ex.getBindingResult().getFieldErrors().forEach(error -> {
+                errores.put(error.getField(), error.getDefaultMessage());
+            });
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), "Error de validación", errores));
+        }
     }
 
     private ErrorValidacionDTO mapearError(FieldError error) {
@@ -64,9 +84,9 @@ public class GlobalExceptionHandler {
 
     // Se dispara cuando falta un parámetro requerido en la solicitud.
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ApiResponse<Object>> handleParametroFaltante(MissingServletRequestParameterException ex){
+    public ResponseEntity<ApiResponse<Object>> handleParametroFaltante(MissingServletRequestParameterException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), 
+                .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(),
                         "Falta un parámetro requerido: " + ex.getParameterName()));
     }
 
