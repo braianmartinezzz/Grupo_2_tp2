@@ -26,7 +26,7 @@ import jakarta.validation.constraints.DecimalMin;
 @Validated 
 @RestController 
 @RequestMapping("/api/ventas")
-@Tag (name = "Ventas", description = "Operaciones relacionadas con ventas (ver estadisticas, aplicar descuento)")
+@Tag (name = "Ejercicio 1 - Ventas", description = "Operaciones relacionadas con ventas (ver estadisticas, aplicar descuento)")
 public class VentasController {
 
     private VentasService ventasService;
